@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Image, BackHandler, ToastAndroid } from 'react-native'
+import { View, StyleSheet, Image, DrawerLayoutAndroid, ToastAndroid } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 import Button from '../components/Button'
 import camIcon from '../assets/images/camera.png'
 import switchIcon from '../assets/images/camera_switch.png'
 import gearIcon from '../assets/images/gear.png'
+import RadioGroup from '../components/RadioGroup'
 
 const styles = StyleSheet.create({
 	wrapper: { flex: 1 },
@@ -16,6 +17,7 @@ const styles = StyleSheet.create({
 	img: { width: 60, height: 60 },
 	buttonSmall: { width: 60, height: 60 },
 	imgSmall: { width: 50, height: 50 },
+	drawerWrapper: { flex: 1, padding: 25 },
 })
 
 class CameraView extends Component {
@@ -30,7 +32,6 @@ class CameraView extends Component {
 		this.switchHandler = this.switchHandler.bind(this)
 		this.photoHandler = this.photoHandler.bind(this)
 		this.settingsHandler = this.settingsHandler.bind(this)
-		// this.handleBackPress = this.handleBackPress.bind(this)
 	}
 
 	switchHandler() {
@@ -46,42 +47,41 @@ class CameraView extends Component {
 		}
 	}
 
-	// obsolete cuz refreshing when photo being taken
-	/* componentDidMount() {
-		BackHandler.addEventListener('hardwareBackPress', this.handleBackPress)
+	settingsHandler() {
+		this.drawer.openDrawer()
 	}
-
-	componentWillUnmount() {
-		BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress)
-	}
-
-	handleBackPress() {
-		this.props.navigation.goBack()
-		this.props.navigation.state.params.albumRefresh()
-		return true
-	} */
-
-	settingsHandler() {}
 
 	render() {
 		return (
-			<View style={styles.wrapper}>
-				<Camera ref={ref => (this.camera = ref)} style={styles.camera} type={this.state.frontCam ? Camera.Constants.Type.front : Camera.Constants.Type.back}>
-					<View style={styles.inCamWrapper}>
-						<View style={styles.buttonsWrapper}>
-							<Button style={[styles.button, styles.buttonSmall]}>
-								<Image source={gearIcon} alt={'settings'} style={styles.imgSmall} />
-							</Button>
-							<Button onTouch={this.photoHandler} style={styles.button}>
-								<Image source={camIcon} alt={'cam'} style={styles.img} />
-							</Button>
-							<Button onTouch={this.switchHandler} style={[styles.button, styles.buttonSmall]}>
-								<Image source={switchIcon} alt={'switch'} style={styles.imgSmall} />
-							</Button>
-						</View>
+			<DrawerLayoutAndroid
+				drawerBackgroundColor="rgba(0,0,0,0.5)"
+				drawerWidth={300}
+				drawerPosition={DrawerLayoutAndroid.positions.Left}
+				ref={ref => (this.drawer = ref)}
+				renderNavigationView={() => (
+					<View style={styles.drawerWrapper}>
+						<RadioGroup color="#E91E63" title='Test Group' data={[{text:'option1', val:1}, {text:'option2', val:2}, {text:'option3', val:3}, {text:'option4', val:4}]} />
 					</View>
-				</Camera>
-			</View>
+				)}
+			>
+				<View style={styles.wrapper}>
+					<Camera ref={ref => (this.camera = ref)} style={styles.camera} type={this.state.frontCam ? Camera.Constants.Type.front : Camera.Constants.Type.back}>
+						<View style={styles.inCamWrapper}>
+							<View style={styles.buttonsWrapper}>
+								<Button onTouch={this.settingsHandler} style={[styles.button, styles.buttonSmall]}>
+									<Image source={gearIcon} alt={'settings'} style={styles.imgSmall} />
+								</Button>
+								<Button onTouch={this.photoHandler} style={styles.button}>
+									<Image source={camIcon} alt={'cam'} style={styles.img} />
+								</Button>
+								<Button onTouch={this.switchHandler} style={[styles.button, styles.buttonSmall]}>
+									<Image source={switchIcon} alt={'switch'} style={styles.imgSmall} />
+								</Button>
+							</View>
+						</View>
+					</Camera>
+				</View>
+			</DrawerLayoutAndroid>
 		)
 	}
 }
