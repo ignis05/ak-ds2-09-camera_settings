@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, Image, StyleSheet, Dimensions, ToastAndroid } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, Dimensions, ToastAndroid } from 'react-native'
 import * as MediaLibrary from 'expo-media-library'
 import Button from '../components/Button'
 
@@ -34,13 +34,26 @@ class BigPhoto extends Component {
 	}
 
 	render() {
+		let asset = this.props.navigation.state.params.asset
 		return (
 			<View>
-				<Image resizeMode={'contain'} style={{ width: '100%', height: '97%' }} source={{ uri: this.props.navigation.state.params.asset.uri }} />
+				<ImageBackground resizeMode={'contain'} style={{ width: '100%', height: '97%' }} source={{ uri: asset.uri }} >
+					<Text
+						style={{
+							color: 'white',
+							backgroundColor: '#00000077',
+							fontSize: (Dimensions.get('window').width / 350) * 20,
+							textAlign: 'right',
+							width: 'auto',
+							position: 'absolute',
+							right: 0,
+							bottom: 0,
+						}}
+						>
+							{`${asset.width} x ${asset.height}`}
+						</Text>
+				</ImageBackground>
 				<View style={styles.buttonsWrapper}>
-					<Button style={styles.smallButton} onTouch={this.share}>
-						Share
-					</Button>
 					<Button style={styles.smallButton} onTouch={this.delete}>
 						Delete
 					</Button>
