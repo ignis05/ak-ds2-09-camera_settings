@@ -65,6 +65,7 @@ class CameraView extends Component {
 						<ScrollView>
 							<RadioGroup color="#E91E63" title="WHITE BALANCE" data={Camera.Constants.WhiteBalance} defaultValue={0} onChange={val => this.setState({ wb: val })} />
 							<RadioGroup color="#E91E63" title="FLASH MODE" data={Camera.Constants.FlashMode} defaultValue={3} onChange={val => this.setState({ fm: val })} />
+							<RadioGroup color="#E91E63" title="CAMERA RATIO" data={{ '4:3': '4:3', '16:9': '16:9' }} defaultValue={'16:9'} onChange={val => this.setState({ ratio: val })} />
 						</ScrollView>
 					</View>
 				)}
