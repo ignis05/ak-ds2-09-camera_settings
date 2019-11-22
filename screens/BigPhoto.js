@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
 })
 
 class BigPhoto extends Component {
-	static navigationOptions = {
-		title: 'Big Photo',
-	}
+	static navigationOptions = ({ navigation }) => ({
+		title: navigation.getParam('name', 'Big Photo'),
+	})
 
 	constructor(props) {
 		super(props)

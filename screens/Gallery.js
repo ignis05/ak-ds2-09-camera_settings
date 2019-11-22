@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, FlatList, Dimensions, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Dimensions, ToastAndroid, ToolbarAndroid } from 'react-native'
 import * as Permissions from 'expo-permissions'
 import * as MediaLibrary from 'expo-media-library'
 import Button from '../components/Button'
 import Photo from '../components/Photo'
 
 const styles = StyleSheet.create({
-	wrapper: { flex: 1, paddingTop: 10 },
-	smallButton: { fontSize: 20, flex: 1, textAlign: 'center', display: 'flex', fontWeight: 'bold' },
-	buttonsWrapper: { width: '100%', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: 10 },
+	wrapper: { flex: 1 },
+	toolbar: { backgroundColor: '#E91E63', height: 56, width: '100%', elevation: 5 },
+	statusBarBackground: { height: 25, backgroundColor: '#E91E63', width: '100%', elevation: 5 },
 })
 
 class Gallery extends Component {
 	static navigationOptions = {
-		title: 'Photos saved on device',
+		// title: 'Photos saved on device',
+		header: null,
 	}
 
 	constructor(props) {
@@ -26,6 +27,7 @@ class Gallery extends Component {
 		this.openCamera = this.openCamera.bind(this)
 		this.deleteSelected = this.deleteSelected.bind(this)
 		this.markPhoto = this.markPhoto.bind(this)
+		this.onActionSelected = this.onActionSelected.bind(this)
 	}
 
 	componentDidMount() {
@@ -50,7 +52,7 @@ class Gallery extends Component {
 	}
 
 	openBigPhoto(asset) {
-		this.props.navigation.navigate('bigPhoto', { asset: asset, albumRefresh: this.updatePhotos })
+		this.props.navigation.navigate('bigPhoto', { asset: asset, albumRefresh: this.updatePhotos, name: asset.filename })
 	}
 
 	markPhoto(asset) {
@@ -92,20 +94,37 @@ class Gallery extends Component {
 		this.props.navigation.navigate('camera', { albumRefresh: this.updatePhotos })
 	}
 
+	onActionSelected(i) {
+		switch (i) {
+			case 0:
+				this.openCamera()
+				break
+			case 1:
+				this.switchDisplay()
+				break
+			case 2:
+				this.deleteSelected()
+				break
+		}
+	}
+
 	render() {
 		return (
 			<View style={styles.wrapper}>
-				<View style={styles.buttonsWrapper}>
-					<Button style={styles.smallButton} onTouch={this.switchDisplay}>
-						Grid / List
-					</Button>
-					<Button style={styles.smallButton} onTouch={this.openCamera}>
-						Open Camera
-					</Button>
-					<Button style={styles.smallButton} onTouch={this.deleteSelected}>
-						Remove Selected
-					</Button>
-				</View>
+				<View style={styles.statusBarBackground} />
+				<ToolbarAndroid
+					style={styles.toolbar}
+					titleColor="#fff"
+					navIcon={require('../assets/images/back.png')}
+					title="Gallery"
+					actions={[
+						{ title: 'open camera', show: 'never' },
+						{ title: 'grid/list', show: 'never' },
+						{ title: 'remove selected', show: 'never' },
+					]}
+					onIconClicked={this.props.navigation.goBack}
+					onActionSelected={this.onActionSelected}
+				/>
 				<FlatList
 					numColumns={this.state.largePhotos ? 1 : 4}
 					key={this.state.largePhotos ? 1 : 4}
