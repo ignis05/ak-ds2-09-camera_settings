@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, Image, DrawerLayoutAndroid, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, Image, DrawerLayoutAndroid, ToastAndroid } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 import Button from '../components/Button'
@@ -27,7 +27,7 @@ class CameraView extends Component {
 
 	constructor(props) {
 		super(props)
-		this.state = { frontCam: false }
+		this.state = { frontCam: false, ratio: '16:9', wb: 0, fm: 3, ps: false }
 
 		this.switchHandler = this.switchHandler.bind(this)
 		this.photoHandler = this.photoHandler.bind(this)
@@ -41,9 +41,9 @@ class CameraView extends Component {
 	async photoHandler() {
 		if (this.camera) {
 			let foto = await this.camera.takePictureAsync()
+			ToastAndroid.showWithGravity('Photo saved!', ToastAndroid.SHORT, ToastAndroid.CENTER)
 			await MediaLibrary.createAssetAsync(foto.uri) // domyslnie zapisuje w DCIM
 			await this.props.navigation.state.params.albumRefresh()
-			ToastAndroid.showWithGravity('Photo saved!', ToastAndroid.SHORT, ToastAndroid.CENTER)
 		}
 	}
 
@@ -52,6 +52,7 @@ class CameraView extends Component {
 	}
 
 	render() {
+		console.log(Camera.Constants)
 		return (
 			<DrawerLayoutAndroid
 				drawerBackgroundColor="rgba(0,0,0,0.5)"
@@ -60,12 +61,21 @@ class CameraView extends Component {
 				ref={ref => (this.drawer = ref)}
 				renderNavigationView={() => (
 					<View style={styles.drawerWrapper}>
-						<RadioGroup color="#E91E63" title='Test Group' data={[{text:'option1', val:1}, {text:'option2', val:2}, {text:'option3', val:3}, {text:'option4', val:4}]} />
+						<Text style={{ color: 'white', fontSize: 28 }}>Settings</Text>
+						<RadioGroup color="#E91E63" title="WHITE BALANCE" data={Camera.Constants.WhiteBalance} defaultValue={0} onChange={val => this.setState({ wb: val })} />
 					</View>
 				)}
 			>
 				<View style={styles.wrapper}>
-					<Camera ref={ref => (this.camera = ref)} style={styles.camera} type={this.state.frontCam ? Camera.Constants.Type.front : Camera.Constants.Type.back}>
+					<Camera
+						ref={ref => (this.camera = ref)}
+						style={styles.camera}
+						ratio={this.state.ratio}
+						whiteBalance={this.state.wb}
+						pictureSize={this.state.ps}
+						flashMode={this.state.fm}
+						type={this.state.frontCam ? Camera.Constants.Type.front : Camera.Constants.Type.back}
+					>
 						<View style={styles.inCamWrapper}>
 							<View style={styles.buttonsWrapper}>
 								<Button onTouch={this.settingsHandler} style={[styles.button, styles.buttonSmall]}>

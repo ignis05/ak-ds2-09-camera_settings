@@ -13,19 +13,24 @@ class RadioGroup extends Component {
 	switchHandler(val) {
 		console.log('switch selected to: ' + val)
 		this.setState({ selected: val })
-		if(this.props.onChange) this.props.onChange(val)
+		if (this.props.onChange) this.props.onChange(val)
 	}
 
 	render() {
 		return (
-			<View style={{borderColor:'white', borderTopWidth:3}}>
-				<Text style={{textAlign:'right', color:'white', fontSize:20}}>{this.props.title}</Text>
-				{this.props.data.map(val => (
-					<View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }} key={val.val}>
-						<RadioButton color="#E91E63" selected={this.state.selected == val} onPress={this.switchHandler} val={val} />
-						<Text style={{ color: 'white', marginLeft: 20 }}>{val.text}</Text>
-					</View>
-				))}
+			<View style={{ borderColor: 'white', borderTopWidth: 3 }}>
+				<Text style={{ textAlign: 'right', color: 'white', fontSize: 20 }}>{this.props.title}</Text>
+				{Object.keys(this.props.data)
+					.sort()
+					.map(key => {
+						let val = this.props.data[key]
+						return (
+							<View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }} key={val}>
+								<RadioButton color="#E91E63" selected={this.state.selected == val} onPress={this.switchHandler} val={val} />
+								<Text style={{ color: 'white', marginLeft: 20 }}>{key}</Text>
+							</View>
+						)
+					})}
 			</View>
 		)
 	}
