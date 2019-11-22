@@ -27,11 +27,12 @@ class CameraView extends Component {
 
 	constructor(props) {
 		super(props)
-		this.state = { frontCam: false, ratio: '16:9', wb: 0, fm: 3, ps: false }
+		this.state = { frontCam: false, ratio: '16:9', wb: 0, fm: 3, ps: '', pss: { loading: '' } }
 
 		this.switchHandler = this.switchHandler.bind(this)
 		this.photoHandler = this.photoHandler.bind(this)
 		this.settingsHandler = this.settingsHandler.bind(this)
+		this.getPicSizes = this.getPicSizes.bind(this)
 	}
 
 	switchHandler() {
@@ -51,8 +52,23 @@ class CameraView extends Component {
 		this.drawer.openDrawer()
 	}
 
+	async getPicSizes() {
+		if (this.camera) {
+			const sizes = await this.camera.getAvailablePictureSizesAsync(this.state.ratio)
+			let x = {}
+			for (s of sizes) {
+				x[s] = s
+			}
+			this.setState({ pss: x })
+		}
+	}
+
+	componentDidMount() {
+		this.getPicSizes()
+	}
+
 	render() {
-		console.log(Camera.Constants)
+		console.log(Camera.defaultProps)
 		return (
 			<DrawerLayoutAndroid
 				drawerBackgroundColor="rgba(0,0,0,0.5)"
@@ -65,7 +81,16 @@ class CameraView extends Component {
 						<ScrollView>
 							<RadioGroup color="#E91E63" title="WHITE BALANCE" data={Camera.Constants.WhiteBalance} defaultValue={0} onChange={val => this.setState({ wb: val })} />
 							<RadioGroup color="#E91E63" title="FLASH MODE" data={Camera.Constants.FlashMode} defaultValue={3} onChange={val => this.setState({ fm: val })} />
-							<RadioGroup color="#E91E63" title="CAMERA RATIO" data={{ '4:3': '4:3', '16:9': '16:9' }} defaultValue={'16:9'} onChange={val => this.setState({ ratio: val })} />
+							<RadioGroup
+								color="#E91E63"
+								title="CAMERA RATIO"
+								data={{ '4:3': '4:3', '16:9': '16:9' }}
+								defaultValue={'16:9'}
+								onChange={val => {
+									this.setState({ ratio: val }, () => this.getPicSizes())
+								}}
+							/>
+							<RadioGroup color="#E91E63" title="PICTURE SIZES" data={this.state.pss} defaultValue={''} onChange={val => this.setState({ ps: val })} />
 						</ScrollView>
 					</View>
 				)}
