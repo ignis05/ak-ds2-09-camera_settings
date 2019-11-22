@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, DrawerLayoutAndroid, ToastAndroid } from 'react-native'
+import { View, Text, StyleSheet, Image, DrawerLayoutAndroid, ToastAndroid, ScrollView } from 'react-native'
 import { Camera } from 'expo-camera'
 import * as MediaLibrary from 'expo-media-library'
 import Button from '../components/Button'
@@ -62,7 +62,10 @@ class CameraView extends Component {
 				renderNavigationView={() => (
 					<View style={styles.drawerWrapper}>
 						<Text style={{ color: 'white', fontSize: 28 }}>Settings</Text>
-						<RadioGroup color="#E91E63" title="WHITE BALANCE" data={Camera.Constants.WhiteBalance} defaultValue={0} onChange={val => this.setState({ wb: val })} />
+						<ScrollView>
+							<RadioGroup color="#E91E63" title="WHITE BALANCE" data={Camera.Constants.WhiteBalance} defaultValue={0} onChange={val => this.setState({ wb: val })} />
+							<RadioGroup color="#E91E63" title="FLASH MODE" data={Camera.Constants.FlashMode} defaultValue={3} onChange={val => this.setState({ fm: val })} />
+						</ScrollView>
 					</View>
 				)}
 			>
